@@ -89,8 +89,6 @@ def compile(infix):
             frag2.accept.edges.append(frag1.start)
             # Create new instance of Fragment to represent the new NFA
             newfrag = Fragment(frag2.start, frag1.accept)
-            # Push the new NFA to the NFA stack
-            nfa_stack.append(newfrag)
         elif c == '|':
             # Pop two fragments off the stack
             frag1 = nfa_stack.pop()
@@ -103,26 +101,26 @@ def compile(infix):
             frag2.accept.edges.append(accept)
             # Create new instance of the fragment
             newfrag = Fragment(start, accept)
-            nfa_stack.append(newfrag)
         elif c == '*':
             # Pop a single fragment off the stack
             frag = nfa_stack.pop()
             accept = State()
             start = State(edges=[frag.start, accept])
             # Point the arrows
-            frag.accept.edge = ([frag.start, accept])
+            frag.accept.edges = ([frag.start, accept])
             # Create new instance of the fragment
             newfrag = Fragment(start, accept)
         else:
             accept = State()
-            initial = State(label=c, edges=[accept])
+            start = State(label=c, edges=[accept])
             # Create new instance of the fragment
-            newfrag = Fragment(initial, accept)
+            newfrag = Fragment(start, accept)
         # Push new nfa to the stack
         nfa_stack.append(newfrag)
 
     # The NFA stack should have exactly one NFA on it
     return nfa_stack.pop()
+#--------------------------
 
 # Add a state to a set and follow all of the e arrows
 def followes(state, current):
@@ -155,24 +153,23 @@ def match(regex, s):
 
     # Loop through characters in s
     for c in s:
-        # Keep track of where you aere
+        # Keep track of where you were
         previous = current
         # Create a new empty set for states we're about to be in
         current = set()
         # Loop through the previous states
         for state in previous:
-            # Only follow arrows not labeled e (epsilon) 
+            # Only follow arrows not labeled e(epsilon) 
             if state.label is not None:
                 # If the label of the state is equal to the character we've read
                 if state.label == c:
                     # Add the state at the end of the arrow to current
                     followes(state.edges[0], current)
-
-
+                    
     # Ask the NFA if it matches the string s
     return nfa.accept in current
 
-print(match("a.b|b*", "bbbbbbbbbbb"))
+print(match("a.b|b*", "xbbbbbbbbbbb"))
 
 
 
