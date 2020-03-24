@@ -147,7 +147,7 @@ def match(regex, s):
     # The current set of states
     current = set()
     # Add the first state and follow all epsilon arrows
-    followes = (nfa.start, current)
+    followes(nfa.start, current)
     # The previous set of states
     previous = set()
 
@@ -169,7 +169,7 @@ def match(regex, s):
     # Ask the NFA if it matches the string s
     return nfa.accept in current
 
-print(match("a.b|b*", "xbbbbbbbbbbb"))
+print(match("a.b|b*", "bbbbbbbbbbb"))
 
 
 
